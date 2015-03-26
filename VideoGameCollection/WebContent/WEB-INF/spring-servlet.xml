@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:lang="http://www.springframework.org/schema/lang"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans">
+	<context:annotation-config />
+
+	<mvc:annotation-driven/>
+	<context:component-scan base-package="edu.uta.vgame.controller" />
+	<context:component-scan base-package="edu.uta.vgame.dao" />
+	<context:component-scan base-package="edu.uta.vgame.service" />
+	<context:component-scan base-package="resources" />
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property value="/WEB-INF/jsp/" name="prefix" />
+		<property value=".jsp" name="suffix" />
+	</bean>
+	<bean class="org.apache.commons.dbcp.BasicDataSource" id="myDataSource"
+		destroy-method="close">
+		<property value="com.mysql.jdbc.Driver" name="driverClassName" />
+		<property name="url" value="jdbc:mysql://localhost:3306/p2" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+	<bean class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+		id="mySessionFactory">
+		<property name="dataSource" ref="myDataSource" />
+		<property name="annotatedClasses">
+			<list>
+			<value>edu.uta.vgame.model.VideoGameMaster</value>
+			<value>edu.uta.vgame.model.VideoGameCondition</value>			
+			<value>edu.uta.vgame.model.VideoGameConsole</value>
+			<value>edu.uta.vgame.model.VideoGameCategory</value>
+			<value>edu.uta.vgame.model.VideoGameContent</value>
+			<value>edu.uta.vgame.model.VideoGameCollection</value>
+			
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.connection.autocommit">true</prop>
+				<prop key="hibernate.connection.SetBigStringTryClob">true</prop>
+				<prop key="hibernate.jdbc.batch_size">0</prop>
+				
+				<prop key="hibernate.c3p0.min_size">5</prop>
+  				<prop key="hibernate.c3p0.max_size">50</prop>
+  				<prop key="hibernate.c3p0.timeout">300</prop>
+  				<prop key="hibernate.c3p0.max_statements">50</prop>
+  				<prop key="hibernate.c3p0.idle_test_period">3000</prop>
+  				
+  				<prop key="hibernate.c3p0.acquireRetryAttempts">30</prop>
+  				<prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+				<prop key="hibernate.c3p0.preferredTestQuery">SELECT 1</prop>
+				
+			</props>
+		</property>
+	</bean>
+	<tx:annotation-driven />
+	<bean class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+		id="transactionManager">
+		<property name="sessionFactory" ref="mySessionFactory" />
+	</bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property value="0" name="cacheSeconds" />
+	</bean>
+
+</beans>
